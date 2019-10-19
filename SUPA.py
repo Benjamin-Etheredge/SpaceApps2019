@@ -1,6 +1,5 @@
 from collections import OrderedDict
 
-import Filler
 from HelperTestingFunctions import get_testing_dataset
 
 import pandas as pd
@@ -24,8 +23,10 @@ class Handler:
     # TODO Finish method to return list of all functions
     @staticmethod
     def get_filler_methods() -> list:
-        # print(Filler.Filler.__subclasses__())
-        return []
+        print("filler_mtethods---------------------")
+        import fillers
+        print(fillers.Filler.__subclasses__())
+        return fillers.Filler.__subclasses__()
 
     # TODO return all column names that are missing values
     @staticmethod
