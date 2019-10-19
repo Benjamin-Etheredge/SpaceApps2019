@@ -22,6 +22,8 @@ X, y = cal_housing.data, cal_housing.target
 names = cal_housing.feature_names
 X = pd.DataFrame(X, columns=names)
 y = pd.Series(y)
+data = X
+data["target"] = y
 ```
 
 ```python
@@ -30,4 +32,8 @@ X.head()
 
 ```python
 y.head()
+```
+
+```python
+data.head()
 ```
