@@ -43,10 +43,11 @@ class Handler:
     # TODO Finish method to return best fill method
     @staticmethod
     def find_best_fill_method(data: pd.DataFrame, label: str) -> pd.DataFrame:
-        #filler_methods = Handler.get_filler_methods()
-        filler_methods = [fill_column]
+        filler_methods = Handler.get_filler_methods()
+        #filler_methods = [fill_column]
         columns_with_missing_values = Handler.get_columns_with_missing_values(data)
-        columns_with_missing_values = ['AveRooms']
+
+
         if len(columns_with_missing_values) == 0:
             return data
 
@@ -73,17 +74,16 @@ class Handler:
                 for column in args.keys():
                     new_data = args[column](new_data, column)
             except:
-                return float("inf")
-
+                # TODO imporve
+                return 999999
 
             y = new_data[label]
             x = new_data.drop(labels=[label], axis=1)
 
             model = LinearRegression()
 
-
             score = cross_val_score(model, x, y, cv=5, scoring='explained_variance')
-            return 1/ (sum(score)/len(score))
+            return 1/(sum(score)/len(score))
 
         best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=100)
         print(best)
@@ -103,6 +103,7 @@ def space(column_names, functions):
 
 if __name__ == "__main__":
     test_df, label = get_testing_dataset()
+    #print(test_df.isnull().sum())
     result = Handler.find_best_fill_method(test_df, label)
     print("WE RAN YALL")
     print(result.describe())
