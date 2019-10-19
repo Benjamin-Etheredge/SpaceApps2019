@@ -1,12 +1,21 @@
+from collections import OrderedDict
+
 import Filler
 from HelperTestingFunctions import get_testing_dataset
 
 import pandas as pd
 
+from hyperopt import hp
+from hyperopt import fmin, tpe
 from copy import deepcopy
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import cross_val_score
 
+
+def fill_column(data: pd.DataFrame, column_name: str) -> pd.DataFrame:
+    data[column_name] = data[column_name].fillna(data[column_name].median())
+    return data
 
 class Handler:
     def __init__(self):
@@ -34,18 +43,50 @@ class Handler:
     # TODO Finish method to return best fill method
     @staticmethod
     def find_best_fill_method(data: pd.DataFrame, label: str) -> pd.DataFrame:
-        filler_methods = Handler.get_filler_methods()
+        #filler_methods = Handler.get_filler_methods()
+        filler_methods = [fill_column]
         columns_with_missing_values = Handler.get_columns_with_missing_values(data)
+        columns_with_missing_values = ['AveRooms']
+        if len(columns_with_missing_values) == 0:
+            return data
 
-        y = data[label]
-        x = data.drop(labels=[label], axis=1)
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=4)
+        print(data.info())
 
         values = {column: filler_methods for column in columns_with_missing_values}
-        regressor = LinearRegression()
 
-        grid_acc = GridSearchCV(regressor, param_grid=values, scoring='explained_variance')
-        grid_acc.fit(x_train, y_train)
+        names_methods = [(column_name, filler_methods) for column_name in columns_with_missing_values]
+        print(f"names_methods: {names_methods}")
+        space = {column_name: hp.choice(column_name, filler_methods) for column_name in columns_with_missing_values}
+        print(f"space: {space}")
+        #trails =fill_column
+        from hyperopt import Trials
+        # Create a trials object
+        tpe_trials = Trials()
+
+        import random
+        def objective(args):
+            print("objective---------------------")
+            print(f"args: {args}")
+            new_data = deepcopy(data)
+
+            try:
+                for column in args.keys():
+                    new_data = args[column](new_data, column)
+            except:
+                return float("inf")
+
+
+            y = new_data[label]
+            x = new_data.drop(labels=[label], axis=1)
+
+            model = LinearRegression()
+
+
+            score = cross_val_score(model, x, y, cv=5, scoring='explained_variance')
+            return 1/ (sum(score)/len(score))
+
+        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=100)
+        print(best)
         return data
 
         #= hp.choice("filler", []
@@ -53,6 +94,11 @@ class Handler:
 
 def classifier_builder(values):
     pass
+
+def space(column_names, functions):
+    return space
+
+
 
 
 if __name__ == "__main__":
