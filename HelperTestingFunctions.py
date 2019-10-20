@@ -8,8 +8,8 @@ def get_testing_dataset():
     X = pd.DataFrame(X, columns=names)
     y = pd.Series(y)
     data = X
-    data["target"] = y
     missing_data = make_missing_data(data, n=.25)
+    missing_data["target"] = y
     return missing_data, "target"
 
 def get_testing_dataset_vanilla():
