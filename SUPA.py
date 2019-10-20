@@ -65,7 +65,6 @@ class Handler:
         #trails =fill_column
 
         # Create a trials object
-        tpe_trials = Trials()
 
 
         def objective(args):
@@ -84,14 +83,16 @@ class Handler:
             #model = RandomForestRegressor(n_estimators=4, n_jobs=-1)
             model = LinearRegression()
 
-            score = cross_val_score(model, x, y, cv=5, n_jobs=-1)
-            score = [value for value in score if 0 < value < 1]
-            #print(f"score: {score}")
+            score = cross_val_score(model, x, y, cv=5, n_jobs=-1, scoring='neg_mean_squared_error')
+            print(f"score: {score}")
+            #score = [value for value in score if 0 < value < 1]
             return 1/(sum(score)/len(score))
 
-        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=100)
+        tpe_trials = Trials()
+        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=2)
         print(best)
         print([(key, filler_methods[best[key]]) for key in best.keys()])
+        print(tpe_trials)
 
 
         return data
@@ -122,8 +123,9 @@ if __name__ == "__main__":
 
     model = LinearRegression()
 
-    score = cross_val_score(model, x, y, cv=5, n_jobs=-1)
-    score = [value for value in score if 0 < value < 1]
+    #score = cross_val_score(model, x, y, cv=5, n_jobs=-1)
+    score = cross_val_score(model, x, y, cv=5, n_jobs=-1, scoring='neg_mean_squared_error')
+    #score = [value for value in score if 0 < value < 1]
     print(f"score: {score}")
     print(f"score: {1 / (sum(score) / len(score))}")
 
