@@ -46,8 +46,10 @@ class Handler:
     def find_best_fill_method(data: pd.DataFrame, label: str) -> pd.DataFrame:
         filler_methods = Handler.get_filler_methods()
         #filler_methods = [fill_column]
-        columns_with_missing_values = Handler.get_columns_with_missing_values(data)
-
+        try:
+            columns_with_missing_values = Handler.get_columns_with_missing_values(data)
+        except:
+            raise FillerFailed
 
         if len(columns_with_missing_values) == 0:
             return data
@@ -99,7 +101,9 @@ def classifier_builder(values):
 def space(column_names, functions):
     return space
 
-
+class FillerFailed(Exception):
+    """Tried to fill in missing data but something bad happened!"""
+    pass
 
 
 if __name__ == "__main__":
