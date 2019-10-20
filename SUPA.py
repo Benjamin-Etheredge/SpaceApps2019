@@ -82,9 +82,10 @@ class Handler:
             x = new_data.drop(labels=[label], axis=1)
 
             model = RandomForestRegressor(n_estimators=4, n_jobs=-1)
+            #model = RandomForestRegressor()
 
-            score = cross_val_score(model, x, y, cv=5,
-                                   n_jobs=-1, scoring='explained_variance')
+            score = cross_val_score(model, x, y, cv=5, n_jobs=-1)
+            print(f"score: {score}")
             return 1/(sum(score)/len(score))
 
         best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=1000)
