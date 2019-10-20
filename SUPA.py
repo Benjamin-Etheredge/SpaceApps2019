@@ -86,7 +86,7 @@ class Handler:
             score = cross_val_score(model, x, y, cv=5, n_jobs=-1, scoring='neg_mean_squared_error')
             print(f"score: {score}")
             #score = [value for value in score if 0 < value < 1]
-            return 1/(sum(score)/len(score))
+            return (sum(score)/len(score))
 
         tpe_trials = Trials()
         best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=2)
@@ -128,5 +128,5 @@ if __name__ == "__main__":
     score = cross_val_score(model, x, y, cv=5, n_jobs=-1, scoring='neg_mean_squared_error')
     #score = [value for value in score if 0 < value < 1]
     print(f"baseline scores: {score}")
-    print(f"baseline score: {1 / (sum(score) / len(score))}")
+    print(f"baseline score: {(sum(score) / len(score))}")
 
