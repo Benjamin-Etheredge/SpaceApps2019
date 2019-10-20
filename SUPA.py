@@ -59,9 +59,9 @@ class Handler:
         values = {column: filler_methods for column in columns_with_missing_values}
 
         names_methods = [(column_name, filler_methods) for column_name in columns_with_missing_values]
-        print(f"names_methods: {names_methods}")
+        # print(f"names_methods: {names_methods}")
         space = {column_name: hp.choice(column_name, filler_methods) for column_name in columns_with_missing_values}
-        print(f"space: {space}")
+        # print(f"space: {space}")
         #trails =fill_column
 
         # Create a trials object
@@ -84,20 +84,31 @@ class Handler:
             model = LinearRegression()
 
             score = cross_val_score(model, x, y, cv=5, n_jobs=-1, scoring='neg_mean_squared_error')
-            print(f"score: {score}")
+            # print(f"score: {score}")
             #score = [value for value in score if 0 < value < 1]
             return (sum(score)/len(score))
 
         tpe_trials = Trials()
-        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=1000)
-        print(best)
-        print([(key, filler_methods[best[key]]) for key in best.keys()])
-        print(f"trails: {tpe_trials.results}")
+        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=10)
+        # print(best)
+        # print([(]ey, filler_methods[best[key]]) for key in best.keys()])
+        # print(f"trails: {tpe_trials.results}")
         all_losses = [dic['loss'] for dic in tpe_trials.results]
-        print(f"all_loses to be graphed: {all_losses}")
+        # print(f"all_loses to be graphed: {all_losses}")
 
-
-        return data
+        """Calm down this is garbage... I know!
+        It gets the best method for each column
+        then applies that method to that column
+        then combines it back to a data frame resembling
+        the input dataframe.
+        """
+        best_methods = [(key, filler_methods[best[key]]) for key in best.keys()]
+        best_data = [m[1](data, m[0])[m[0]].values for m in best_methods]
+        best_data_cols = list(best.keys())
+        best_data = pd.DataFrame(best_data).T
+        best_data.columns = best_data_cols
+        best_data[label] = data[label].values
+        return best_data
 
         #= hp.choice("filler", []
 
