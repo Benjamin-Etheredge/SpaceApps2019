@@ -18,7 +18,6 @@ def get_change(current, previous):
 
 def preprocessing(df, display_stats=True):
     df.replace('', np.nan, inplace = True)
-    df.replace(np.nan, 'None', inplace = True)
     col_uniqueval = {}
 
     for col in df.columns:
