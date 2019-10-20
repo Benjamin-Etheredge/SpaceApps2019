@@ -9,6 +9,7 @@ from hyperopt import fmin, tpe
 from copy import deepcopy
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import cross_val_score
 
 
@@ -81,7 +82,7 @@ class Handler:
             y = new_data[label]
             x = new_data.drop(labels=[label], axis=1)
 
-            model = LinearRegression()
+            model = RandomForestRegressor()
 
             score = cross_val_score(model, x, y, cv=5, scoring='explained_variance')
             return 1/(sum(score)/len(score))
