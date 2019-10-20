@@ -89,7 +89,7 @@ class Handler:
             return (sum(score)/len(score))
 
         tpe_trials = Trials()
-        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=2)
+        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=1000)
         print(best)
         print([(key, filler_methods[best[key]]) for key in best.keys()])
         print(f"trails: {tpe_trials.results}")
