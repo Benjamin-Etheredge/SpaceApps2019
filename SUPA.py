@@ -1,9 +1,8 @@
 from collections import OrderedDict
-
+import random
+from hyperopt import Trials
 from HelperTestingFunctions import get_testing_dataset
-
 import pandas as pd
-
 from hyperopt import hp
 from hyperopt import fmin, tpe
 from copy import deepcopy
@@ -64,11 +63,11 @@ class Handler:
         space = {column_name: hp.choice(column_name, filler_methods) for column_name in columns_with_missing_values}
         print(f"space: {space}")
         #trails =fill_column
-        from hyperopt import Trials
+
         # Create a trials object
         tpe_trials = Trials()
 
-        import random
+
         def objective(args):
             #print("objective---------------------")
             #print(f"args: {args}")
