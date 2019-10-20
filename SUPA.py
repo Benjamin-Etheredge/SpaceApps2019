@@ -10,6 +10,7 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import cross_val_score
+from preprocessing import preprocessing
 
 
 def fill_column(data: pd.DataFrame, column_name: str) -> pd.DataFrame:
@@ -54,7 +55,16 @@ class Handler:
         if len(columns_with_missing_values) == 0:
             return data
 
+        '''
+        print("Pre---------------------------")
+        print(data.describe())
         print(data.info())
+        data = preprocessing(data, True)
+        print("Post---------------------------")
+        print(data.describe())
+        print(data.info())
+        '''
+
         data = data.sample(frac=1, random_state=4)
 
         values = {column: filler_methods for column in columns_with_missing_values}
@@ -90,7 +100,7 @@ class Handler:
             return -1 * (sum(score)/len(score))
 
         tpe_trials = Trials()
-        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=500)
+        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=4)
         # print(best)
         # print([(]ey, filler_methods[best[key]]) for key in best.keys()])
         # print(f"trails: {tpe_trials.results}")
@@ -115,6 +125,7 @@ class Handler:
         best_data = pd.DataFrame(best_data).T
         best_data.columns = best_data_cols
         best_data[label] = data[label].values
+        best_data.to_csv("best_data.csv")
 
         ######################################################################
         """
@@ -130,6 +141,10 @@ class Handler:
         score = cross_val_score(model, x, y, cv=5, n_jobs=-1, scoring='neg_mean_squared_error')
         all_losses.append(score.mean())
         ######################################################################
+        test = pd.DataFrame(tpe_trials, index=None)
+        test.to_csv("test1.csv")
+        df = pd.DataFrame(all_losses, index=None)
+        df.to_csv("test.csv")
 
         return best_data, all_losses, best
 
@@ -153,6 +168,8 @@ if __name__ == "__main__":
     print("WE RAN YALL")
 
     test_df, _ = get_testing_dataset_vanilla()
+
+    test_df = test_df.sample(frac=1, random_state=4)
     y = test_df[label]
     x = test_df.drop(labels=[label], axis=1)
 
