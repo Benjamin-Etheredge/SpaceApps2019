@@ -8,6 +8,14 @@ Created on Sun Oct 20 10:58:03 2019
 import pandas as pd
 import numpy as np
 
+def get_change(current, previous):
+    if current == previous:
+        return 100.0
+    try:
+        return (abs(current - previous) / previous) * 100.0
+    except ZeroDivisionError:
+        return 0
+
 def preprocessing(df, display_stats=True):
     df.replace('', np.nan, inplace = True)
     df.replace(np.nan, 'None', inplace = True)
