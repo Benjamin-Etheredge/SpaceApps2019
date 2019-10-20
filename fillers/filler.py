@@ -11,3 +11,7 @@ class Filler:
     @staticmethod
     def fill_column(data: pd.DataFrame, column_name: str) -> pd.DataFrame:
         raise NotImplementedError('Code it up you scrub!')
+
+    @staticmethod
+    def main(data: pd.DataFrame, column_name: str):
+        fill_column(data, column_name)
