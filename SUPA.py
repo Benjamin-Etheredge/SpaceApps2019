@@ -26,7 +26,7 @@ class Handler:
         print("filler_mtethods---------------------")
         import fillers
         print(fillers.Filler.__subclasses__())
-        return fillers.Filler.__subclasses__()
+        return [thingy.fill_column for thingy in fillers.Filler.__subclasses__()]
 
     # TODO return all column names that are missing values
     @staticmethod
@@ -73,12 +73,10 @@ class Handler:
             print(f"args: {args}")
             new_data = deepcopy(data)
 
-            try:
-                for column in args.keys():
-                    new_data = args[column](new_data, column)
-            except:
+            for column in args.keys():
+                new_data = args[column](new_data, column)
                 # TODO imporve
-                return 999999
+                #return 999999
 
             y = new_data[label]
             x = new_data.drop(labels=[label], axis=1)
