@@ -110,6 +110,7 @@ class FillerFailed(Exception):
 
 if __name__ == "__main__":
     test_df, label = get_testing_dataset()
+    print(test_df['MedInc'].isnull().any())
     #print(test_df.isnull().sum())
     result = Handler.find_best_fill_method(test_df, label)
     print("WE RAN YALL")

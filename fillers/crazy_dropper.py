@@ -13,4 +13,5 @@ class Filler_Crazy_Dropper(Filler):
         #new_data = copy.deepcopy(data)
         new_data = data.dropna(how='any')
         #new_data.isnull().sum()
+        assert(data[column_name].isnull().any())
         return new_data

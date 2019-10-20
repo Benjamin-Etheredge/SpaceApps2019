@@ -17,6 +17,7 @@ class Filler_MostFrequent(Filler):
     def fill_column(data: pd.DataFrame, column_name: str) -> pd.DataFrame:
 
         data[column_name] = data[column_name].fillna(data[column_name].mode()[0])
+        assert(data[column_name].isnull().sum() == 0)
         return data
         #Jdata[column_name] = data[column_name].fillna(data[column_name].mode())
         #return data
