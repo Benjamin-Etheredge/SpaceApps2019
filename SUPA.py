@@ -55,6 +55,7 @@ class Handler:
             return data
 
         print(data.info())
+        data = data.sample(frac=1, random_state=4)
 
         values = {column: filler_methods for column in columns_with_missing_values}
 
@@ -80,8 +81,8 @@ class Handler:
             y = new_data[label]
             x = new_data.drop(labels=[label], axis=1)
 
-            #model = RandomForestRegressor(n_estimators=4, n_jobs=-1)
-            model = LinearRegression()
+            model = RandomForestRegressor(n_estimators=100, n_jobs=-1)
+            #model = LinearRegression()
 
             score = cross_val_score(model, x, y, cv=5, n_jobs=-1, scoring='neg_mean_squared_error')
             # print(f"score: {score}")
@@ -89,7 +90,7 @@ class Handler:
             return -1 * (sum(score)/len(score))
 
         tpe_trials = Trials()
-        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=4)
+        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=500)
         # print(best)
         # print([(]ey, filler_methods[best[key]]) for key in best.keys()])
         # print(f"trails: {tpe_trials.results}")
@@ -124,7 +125,8 @@ class Handler:
         best_data = best_data.dropna()
         y = best_data[label]
         x = best_data.drop(labels=[label], axis=1)
-        model = LinearRegression()
+        #model = LinearRegression()
+        model = RandomForestRegressor(n_estimators=100, n_jobs=-1)
         score = cross_val_score(model, x, y, cv=5, n_jobs=-1, scoring='neg_mean_squared_error')
         all_losses.append(score.mean())
         ######################################################################
@@ -154,7 +156,8 @@ if __name__ == "__main__":
     y = test_df[label]
     x = test_df.drop(labels=[label], axis=1)
 
-    model = LinearRegression()
+    #model = LinearRegression()
+    model = RandomForestRegressor(n_estimators=100, n_jobs=-1)
 
     #score = cross_val_score(model, x, y, cv=5, n_jobs=-1)
     score = cross_val_score(model, x, y, cv=5, n_jobs=-1, scoring='neg_mean_squared_error')
