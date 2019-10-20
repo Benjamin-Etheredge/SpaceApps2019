@@ -14,6 +14,6 @@ class Filler:
 
     @staticmethod
     def main(data: pd.DataFrame, column_name: str):
-        data = fill_column(data, column_name)
+        data = Filler.fill_column(data, column_name)
         assert(not data[column_name].isnull().any())
         return data
