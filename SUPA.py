@@ -69,8 +69,8 @@ class Handler:
 
         import random
         def objective(args):
-            print("objective---------------------")
-            print(f"args: {args}")
+            #print("objective---------------------")
+            #print(f"args: {args}")
             new_data = deepcopy(data)
 
             for column in args.keys():
@@ -86,7 +86,7 @@ class Handler:
             score = cross_val_score(model, x, y, cv=5, scoring='explained_variance')
             return 1/(sum(score)/len(score))
 
-        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=100)
+        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=1000)
         print(best)
         return data
 
