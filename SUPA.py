@@ -26,7 +26,7 @@ class Handler:
         print("filler_mtethods---------------------")
         import fillers
         print(fillers.Filler.__subclasses__())
-        return [thingy.fill_column for thingy in fillers.Filler.__subclasses__()]
+        return [thingy.main for thingy in fillers.Filler.__subclasses__()]
 
     # TODO return all column names that are missing values
     @staticmethod
