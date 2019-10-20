@@ -11,9 +11,8 @@ class Filler:
     @staticmethod
     def fill_column(data: pd.DataFrame, column_name: str) -> pd.DataFrame:
         raise NotImplementedError('Code it up you scrub!')
-
-    @staticmethod
-    def main(data: pd.DataFrame, column_name: str):
-        data = Filler.fill_column(data, column_name)
+    @classmethod
+    def main(self, data: pd.DataFrame, column_name: str):
+        data = self.fill_column(data, column_name)
         assert(not data[column_name].isnull().any())
         return data
