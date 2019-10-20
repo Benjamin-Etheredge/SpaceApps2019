@@ -1,7 +1,7 @@
 from collections import OrderedDict
 import random
 from hyperopt import Trials
-from HelperTestingFunctions import get_testing_dataset
+from HelperTestingFunctions import get_testing_dataset, get_testing_dataset_vanilla
 import pandas as pd
 from hyperopt import hp
 from hyperopt import fmin, tpe
@@ -86,12 +86,14 @@ class Handler:
 
             score = cross_val_score(model, x, y, cv=5, n_jobs=-1)
             score = [value for value in score if 0 < value < 1]
-            print(f"score: {score}")
+            #print(f"score: {score}")
             return 1/(sum(score)/len(score))
 
-        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=4)
+        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=100)
         print(best)
         print([(key, filler_methods[best[key]]) for key in best.keys()])
+
+
         return data
 
         #= hp.choice("filler", []
@@ -110,10 +112,18 @@ class FillerFailed(Exception):
 
 if __name__ == "__main__":
     test_df, label = get_testing_dataset()
-    print(test_df['MedInc'].isnull().any())
-    #print(test_df.isnull().sum())
     result = Handler.find_best_fill_method(test_df, label)
     print("WE RAN YALL")
     print(result.describe())
 
+    test_df, _ = get_testing_dataset_vanilla()
+    y = test_df[label]
+    x = test_df.drop(labels=[label], axis=1)
+
+    model = LinearRegression()
+
+    score = cross_val_score(model, x, y, cv=5, n_jobs=-1)
+    score = [value for value in score if 0 < value < 1]
+    print(f"score: {score}")
+    print(f"score: {1 / (sum(score) / len(score))}")
 
