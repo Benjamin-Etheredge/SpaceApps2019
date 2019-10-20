@@ -89,7 +89,7 @@ class Handler:
             return (sum(score)/len(score))
 
         tpe_trials = Trials()
-        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=10)
+        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=4)
         # print(best)
         # print([(]ey, filler_methods[best[key]]) for key in best.keys()])
         # print(f"trails: {tpe_trials.results}")
@@ -101,6 +101,12 @@ class Handler:
         then applies that method to that column
         then combines it back to a data frame resembling
         the input dataframe.
+
+
+        basic logic of the two list comprehensions are
+
+        best_methods = [(filler_method, column_name), ...]--> tuples of methods and strings
+        best_data = [filler_method(data, column_name), ...]--> list of numpy arrays
         """
         best_methods = [(key, filler_methods[best[key]]) for key in best.keys()]
         best_data = [m[1](data, m[0])[m[0]].values for m in best_methods]
@@ -108,7 +114,22 @@ class Handler:
         best_data = pd.DataFrame(best_data).T
         best_data.columns = best_data_cols
         best_data[label] = data[label].values
-        return best_data
+
+        ######################################################################
+        """
+        This is the code to test the "best" filler for each column method"
+        TODO: rewrite `object` to handle this
+        """
+        # had some nans sneak through it seems not sure how.. so did this
+        best_data = best_data.dropna()
+        y = best_data[label]
+        x = best_data.drop(labels=[label], axis=1)
+        model = LinearRegression()
+        score = cross_val_score(model, x, y, cv=5, n_jobs=-1, scoring='neg_mean_squared_error')
+        all_losses.append(score.mean())
+        ######################################################################
+
+        return best_data, all_losses, best
 
         #= hp.choice("filler", []
 
