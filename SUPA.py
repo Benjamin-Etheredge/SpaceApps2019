@@ -81,15 +81,17 @@ class Handler:
             y = new_data[label]
             x = new_data.drop(labels=[label], axis=1)
 
-            model = RandomForestRegressor(n_estimators=4, n_jobs=-1)
-            #model = RandomForestRegressor()
+            #model = RandomForestRegressor(n_estimators=4, n_jobs=-1)
+            model = LinearRegression()
 
             score = cross_val_score(model, x, y, cv=5, n_jobs=-1)
+            score = [value for value in score if 0 < value < 1]
             print(f"score: {score}")
             return 1/(sum(score)/len(score))
 
-        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=1000)
+        best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=4)
         print(best)
+        print([(key, filler_methods[best[key]]) for key in best.keys()])
         return data
 
         #= hp.choice("filler", []
