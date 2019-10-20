@@ -92,7 +92,9 @@ class Handler:
         best = fmin(fn=objective, space=space, algo=tpe.suggest, trials=tpe_trials, max_evals=2)
         print(best)
         print([(key, filler_methods[best[key]]) for key in best.keys()])
-        print(tpe_trials)
+        print(f"trails: {tpe_trials.results}")
+        all_losses = [dic['loss'] for dic in tpe_trials.results]
+        print(f"all_loses to be graphed: {all_losses}")
 
 
         return data
@@ -115,7 +117,6 @@ if __name__ == "__main__":
     test_df, label = get_testing_dataset()
     result = Handler.find_best_fill_method(test_df, label)
     print("WE RAN YALL")
-    print(result.describe())
 
     test_df, _ = get_testing_dataset_vanilla()
     y = test_df[label]
@@ -126,6 +127,6 @@ if __name__ == "__main__":
     #score = cross_val_score(model, x, y, cv=5, n_jobs=-1)
     score = cross_val_score(model, x, y, cv=5, n_jobs=-1, scoring='neg_mean_squared_error')
     #score = [value for value in score if 0 < value < 1]
-    print(f"score: {score}")
-    print(f"score: {1 / (sum(score) / len(score))}")
+    print(f"baseline scores: {score}")
+    print(f"baseline score: {1 / (sum(score) / len(score))}")
 
